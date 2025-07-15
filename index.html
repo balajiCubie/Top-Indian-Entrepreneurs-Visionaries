@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top Indian Entrepreneurs & Visionaries</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;660;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5; /* Light gray background */
+        }
+        .category-header {
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.3s ease;
+        }
+        .category-header:hover {
+            background-color: #e2e8f0; /* Lighter gray on hover */
+        }
+        .category-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out;
+        }
+        .category-content.expanded {
+            max-height: 2000px; /* Sufficiently large value for expansion */
+            transition: max-height 0.7s ease-in;
+        }
+        .entrepreneur-item {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .entrepreneur-item.hidden {
+            opacity: 0;
+            transform: translateY(10px);
+            height: 0;
+            overflow: hidden;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-6 md:p-8">
+    <!-- Navbar Section -->
+    <nav class="bg-blue-700 p-4 mb-8 rounded-xl shadow-lg">
+        <div class="max-w-4xl mx-auto flex items-center justify-between">
+            <h1 class="text-white text-xl sm:text-2xl md:text-3xl font-bold">
+                Indian Business Visionaries
+            </h1>
+            <!-- You can add navigation links here if needed in the future -->
+            <!--
+            <div class="hidden sm:flex space-x-4">
+                <a href="#" class="text-white hover:text-blue-200 transition duration-300">Home</a>
+                <a href="#" class="text-white hover:text-blue-200 transition duration-300">About</a>
+                <a href="#" class="text-white hover:text-blue-200 transition duration-300">Contact</a>
+            </div>
+            -->
+        </div>
+    </nav>
+
+    <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-xl p-6 sm:p-8 md:p-10">
+        <!-- Header Section (adjusted as title is now in navbar) -->
+        <header class="text-center mb-8">
+            <p class="text-md sm:text-lg text-gray-600">
+                Explore the inspiring legacies of India's top entrepreneurs and leaders.
+            </p>
+        </header>
+
+        <!-- Search Bar -->
+        <div class="mb-8 p-4 bg-blue-50 rounded-lg shadow-md">
+            <input type="text" id="searchBar" placeholder="Search by name or tagline..."
+                   class="w-full p-3 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700">
+        </div>
+
+        <!-- Entrepreneurs List -->
+        <div id="entrepreneursList">
+            <!-- Content will be dynamically loaded here by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        // Data extracted from the provided PDF document
+        const entrepreneursData = {
+            "Industrial Pioneers & Conglomerate Builders": [
+                { name: "Jamsetji Tata", tagline: "'Industrial Pioneer'" },
+                { name: "Jehangir Ratanji Dadabhoy (JRD) Tata", tagline: "'Aviation & Industry Pioneer'" },
+                { name: "Ghanshyam Das Birla", tagline: "'Industrial Patriarch'" },
+                { name: "Adi Godrej (Ardeshir Godrej)", tagline: "'Locksmith & Consumer Goods Innovator'" },
+                { name: "Ratan Tata", tagline: "'Values-Driven Visionary'" },
+                { name: "Kumar Mangalam Birla", tagline: "'Global Conglomerate Strategist'" },
+                { name: "Rahul Bajaj", tagline: "'Automotive Pioneer' (made Bajaj Auto a global auto major)" },
+                { name: "Pawan Munjal", tagline: "'Motorcycle Legend' (building Hero MotoCorp, world's largest two-wheeler maker)" },
+                { name: "Anand Mahindra", tagline: "'Diversification Champion' (Mahindra & Mahindra, global auto and farm leader)" },
+                { name: "Gautam Adani", tagline: "Infrastructure Visionary'" },
+                { name: "Mukesh Ambani", tagline: "'Energy & Tech Titan' (Reliance Industries, telecom and retail growth)" },
+                { name: "Dhirubhai Ambani", tagline: "'Aspirational Visionary' (from snacks vendor to founding Reliance empire)" },
+                { name: "Sunil Bharti Mittal", tagline: "'Telecom Pioneer' (built Bharti Airtel into global carrier)" },
+                { name: "Karsanbhai Patel", tagline: "'Self-Made FMCG Entrepreneur' (founded Nirma, democratized soap industry)" },
+                { name: "Narotam Sekhsaria", tagline: "'Cement Magnate' (co-founded Ambuja Cements, large cement producer)" },
+                { name: "Aditya Vikram Birla", tagline: "Transnational Industrialist' (founded Aditya Birla Group across metals, textiles)" },
+                { name: "Subhash Chandra", tagline: "'Media & Education Mogul' (founded Zee TV; expanded into education)" },
+                { name: "Dhruv Sawhney", tagline: "'Consumer Electronics Pioneer' (Moser Baer; later IGATE/Capgemini)" }
+            ],
+            "Technology & IT Innovators": [
+                { name: "N. R. Narayana Murthy", tagline: "'Infosys Founder & IT Pioneer'" },
+                { name: "Nandan Nilekani", tagline: "'Digital ID Visionary' (co-founded Infosys; architect of Aadhaar)" },
+                { name: "Azim Premji", tagline: "'Philanthropic Tech Titan' (built Wipro; huge contributions to education)" },
+                { name: "Shiv Nadar", tagline: "'Tech Industry Titan' (founded HCL, catapulted India into PC age)" },
+                { name: "Kiran Mazumdar-Shaw", tagline: "'Biotech Trailblazer' (Biocon founder, pioneering affordable biotech solutions)" },
+                { name: "Sundar Pichai", tagline: "'Global Tech Leader' (Google/Alphabet CEO)" },
+                { name: "Satya Nadella", tagline: "'Tech Transformationalist' (Microsoft CEO, cloud expansion)" },
+                { name: "Roshni Nadar Malhotra", tagline: "'IT Industry Leader' (first woman to helm a $10B+ IT co - HCL)" },
+                { name: "Radha Vembu", tagline: "'Software Innovator' (Zoho co-founder, building homegrown Saas globally)" },
+                { name: "Bhavish Aggarwal", tagline: "'Green Mobility Visionary' (Ola founder driving India's EV revolution)" },
+                { name: "Bhavini Rungta", tagline: "'Defense Electronics Leader' (former BEL MD, advancing indigenous defense tech)" },
+                { name: "Vinita Bali", tagline: "'Global FMCG Leader' (ex-President Coca-Cola India; led consumer biz growth)" }
+            ],
+            "Banking, Finance & Investment Leaders": [
+                { name: "Aditya Puri", tagline: "'Banking Visionary' (longest-serving CEO of HDFC Bank, built India's most valuable private bank)" },
+                { name: "Uday Kotak", tagline: "'Financial Services Innovator' (built Kotak Mahindra Bank from finance firm)" },
+                { name: "Deepak Parekh", tagline: "'Housing Finance Pioneer' (led HDFC Ltd., shaped India's mortgage market)" },
+                { name: "Ajay Piramal", tagline: "'Pharma-to-Finance Leader' (grew Piramal Group from textiles to pharma and financial services)" },
+                { name: "Sunil Kant Munjal", tagline: "'Insurance & Sports Entrepreneur' (founded Hero MOTOPLUS Insurance; revived cricket in India)" },
+                { name: "Vijay Kedia", tagline: "'Legendary Investor' (highly regarded stock market guru)" },
+                { name: "Radhakishan Damani", tagline: "'Retail Chain Visionary' (DMart founder, massively expanding organized retail)" },
+                { name: "Ruchir Sharma", tagline: "'Global Investment Strategist' (author and market strategist, influencing investment thinking)" }
+            ],
+            "Manufacturing, Energy & Infrastructure Titans": [
+                { name: "Cyrus Poonawalla", tagline: "'Vaccine Visionary' (founded Serum Institute, world's largest vaccine producer)" },
+                { name: "Vikram Lal", tagline: "'Motorcycle Visionary' (founded Eicher Motors, brought Royal Enfield to global prominence)" },
+                { name: "Pawan Munjal", tagline: "(covered above under Industrial)" },
+                { name: "S. P. Shukla", tagline: "'Automotive Innovator' (Mahindra Satyam founder, merging IT and manufacturing)" },
+                { name: "Dilip Shanghvi", tagline: "'Pharma Magnate' (founded Sun Pharma with $200; grew into India's largest drug company)" },
+                { name: "M. Damodaran", tagline: "'Mergers & Acquisitions Leader' (M&A czar in Indian capital markets)" },
+                { name: "E. Sreedharan", tagline: "'Metro Man' (led Delhi and Mumbai metro projects, transforming urban infrastructure)" },
+                { name: "Vinod Gupta", tagline: "'Rural Telecom Pioneer' (Godfather of mobile telecom in India)" },
+                { name: "Satish Pai", tagline: "'Industrial Heartland Developer' (led Karnataka's infrastructure growth via IRCON, KSIIDC)" }
+            ],
+            "Startups & New Economy Visionaries": [
+                { name: "Sachin Bansal & Binny Bansal", tagline: "'E-commerce Pioneers' (Flipkart co-founders, kickstarting India's online retail boom)" },
+                { name: "Deepinder Goyal", tagline: "'FoodTech Visionary' (Zomato founder, evolving India's food delivery sector)" },
+                { name: "Byju Raveendran", tagline: "'EdTech Innovator' (Byju's founder, revolutionizing digital learning)" },
+                { name: "Divya Gokulnath", tagline: "'Tech-Education Pioneer' (co-founder of Byju's)" },
+                { name: "Vijay Shekhar Sharma", tagline: "'Digital Payments Pioneer' (Paytm founder, advancing cashless economy)" },
+                { name: "Harsh Jain & Bhavit Sheth", tagline: "'Fantasy Sports Entrepreneurs' (Dream11 co-founders, popularizing gaming)" },
+                { name: "Bhavish Aggarwal", tagline: "(covered under Tech)" },
+                { name: "Ritesh Agarwal", tagline: "'Budget Hospitality Founder' (OYO Rooms founder, disrupting hotel industry)" },
+                { name: "Rohit Bansal & Kunal Bahl", tagline: "'Online Retail Champions' (Snapdeal founders, early e-commerce entrants)" },
+                { name: "Nithin Kamath", tagline: "'Stock Trading Pioneer' (Zerodha co-founder, democratizing retail investing)" },
+                { name: "Shashank Kumar & Rahul Yadav", tagline: "'Prop Tech Innovators' (Housing.com founders)" },
+                { name: "Bhavin Turakhia", tagline: "'Fintech Titan' (Zeta co-founder, innovating digital finance infrastructure)" },
+                { name: "Sumit Gupta", tagline: "'Crypto Exchange Pioneer' (CoinDCX co-founder)" },
+                { name: "Abhay Soi", tagline: "'Healthcare Entrepreneur' (Max Healthcare founder)" },
+                { name: "Roshni Nadar", tagline: "(covered above under Tech)" }
+            ],
+            "Agriculture, Rural Development & Sustainability Leaders": [
+                { name: "Verghese Kurien", tagline: "'Father of White Revolution' (led Amul, made India world's largest milk producer)" },
+                { name: "M. S. Swaminathan", tagline: "'Green Revolution Architect' (spearheaded high-yield crops, ensuring India's food security)" },
+                { name: "Acharya K. Koneru Ramakrishna Rao", tagline: "'Fertilizer Visionary' (Narora atomic energy/fertilizer pioneer)" },
+                { name: "Anita Rajgarhia", tagline: "'Agri-Input Entrepreneur' (Mahyco co-founder, innovating cotton seeds)" },
+                { name: "Yuvraj Rao", tagline: "'Rural Finance Leader' (BAIF co-founder, building microfinance & animal husbandry)" },
+                { name: "Subhash Palekar", tagline: "'Natural Farming Evangelist' (advocated zero-budget farming across India)" },
+                { name: "Nitin Agrawal", tagline: "'AgTech Innovator' (developed cold storage solutions for farmers)" },
+                { name: "Aruna Roy", tagline: "'Rural Activist' (championed Right to Information, rural empowerment)" },
+                { name: "Kishor Makwana", tagline: "'Waterman of India' (Rajendra Singh, revitalized water conservation)" },
+                { name: "Sanjiv Puri", tagline: "'Firepower Pioneer' (Bharat Forge chairman, boosting manufacturing, defense supply)" }
+            ],
+            "Social Entrepreneurs & Visionary Leaders": [
+                { name: "A. P. J. Abdul Kalam", tagline: "'Big Dreams' (Missile Man and People's President inspiring innovation)" },
+                { name: "Kailash Satyarthi", tagline: "'Child Rights Champion' (Nobel laureate fighting child labor)" },
+                { name: "Sam Pitroda", tagline: "'Telecom Revolutionist' (brought telephony to rural India, co-founded C-DOT)" },
+                { name: "Arunachalam Muruganantham", tagline: "'Social Sanitation Pioneer' (invented low-cost sanitary pad machines for villages)" },
+                { name: "Narayanan Krishnan", tagline: "'Humanitarian Chef' (feeds thousands daily in Madurai)" },
+                { name: "Harish Hande", tagline: "'Clean Energy Visionary' (SELCO founder, providing solar power to rural poor)" },
+                { name: "Dr. Devi Shetty", tagline: "'Affordable Healthcare Innovator' (Narayana Health founder, low-cost cardiac care)" },
+                { name: "R. B. Lal", tagline: "'Fuel Efficiency Leader' (Standard Motor Parts founder, green mobility battery tech)" },
+                { name: "PV Sindhu", tagline: "'Sports Icon' (her Olympic medals inspire sports industry growth)" },
+                { name: "Pullela Gopichand", tagline: "'Badminton Guru' (coach who uplifted Indian badminton globally)" }
+            ]
+        };
+
+        const entrepreneursListDiv = document.getElementById('entrepreneursList');
+        const searchBar = document.getElementById('searchBar');
+
+        /**
+         * Renders the entrepreneur data into the HTML.
+         * @param {Object} data - The data object containing categories and entrepreneurs.
+         */
+        function renderEntrepreneurs(data) {
+            entrepreneursListDiv.innerHTML = ''; // Clear previous content
+
+            for (const category in data) {
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'mb-6 bg-gray-50 rounded-xl shadow-sm overflow-hidden';
+
+                // Category Header (collapsible)
+                const header = document.createElement('div');
+                header.className = 'category-header flex justify-between items-center p-4 bg-blue-600 text-white font-semibold text-lg rounded-t-xl';
+                header.innerHTML = `
+                    <span>${category}</span>
+                    <svg class="w-5 h-5 transform transition-transform duration-300" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                    </svg>
+                `;
+                categoryDiv.appendChild(header);
+
+                // Category Content (collapsible)
+                const content = document.createElement('div');
+                content.className = 'category-content'; // Initially collapsed
+                const ul = document.createElement('ul');
+                ul.className = 'list-none p-0 m-0';
+
+                data[category].forEach(entrepreneur => {
+                    const li = document.createElement('li');
+                    li.className = 'entrepreneur-item p-3 border-b border-gray-200 last:border-b-0 flex flex-col sm:flex-row sm:items-center justify-between';
+                    li.innerHTML = `
+                        <span class="font-medium text-gray-800 text-base sm:text-lg">${entrepreneur.name}</span>
+                        <span class="text-gray-600 text-sm sm:text-base mt-1 sm:mt-0 sm:ml-4">${entrepreneur.tagline}</span>
+                    `;
+                    ul.appendChild(li);
+                });
+                content.appendChild(ul);
+                categoryDiv.appendChild(content);
+                entrepreneursListDiv.appendChild(categoryDiv);
+
+                // Add click listener for collapsing/expanding
+                header.addEventListener('click', () => {
+                    content.classList.toggle('expanded');
+                    header.querySelector('svg').classList.toggle('rotate-180');
+                });
+
+                // Expand all categories by default on initial load
+                content.classList.add('expanded');
+                header.querySelector('svg').classList.add('rotate-180');
+            }
+        }
+
+        /**
+         * Filters the displayed entrepreneurs based on the search input.
+         */
+        function filterEntrepreneurs() {
+            const searchTerm = searchBar.value.toLowerCase();
+            const entrepreneurItems = document.querySelectorAll('.entrepreneur-item');
+
+            entrepreneurItems.forEach(item => {
+                const name = item.querySelector('span:first-child').textContent.toLowerCase();
+                const tagline = item.querySelector('span:last-child').textContent.toLowerCase();
+
+                if (name.includes(searchTerm) || tagline.includes(searchTerm)) {
+                    item.classList.remove('hidden');
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+
+            // Adjust category content height after filtering
+            document.querySelectorAll('.category-content').forEach(contentDiv => {
+                const visibleItems = contentDiv.querySelectorAll('.entrepreneur-item:not(.hidden)');
+                if (visibleItems.length > 0) {
+                    // If there are visible items, ensure the category is expanded
+                    contentDiv.classList.add('expanded');
+                    contentDiv.previousElementSibling.querySelector('svg').classList.add('rotate-180');
+                } else if (searchTerm !== '') {
+                    // If no visible items and search term is active, collapse it
+                    contentDiv.classList.remove('expanded');
+                    contentDiv.previousElementSibling.querySelector('svg').classList.remove('rotate-180');
+                } else {
+                    // If search term is empty, expand all
+                    contentDiv.classList.add('expanded');
+                    contentDiv.previousElementSibling.querySelector('svg').classList.add('rotate-180');
+                }
+            });
+        }
+
+        // Initial render of all entrepreneurs
+        renderEntrepreneurs(entrepreneursData);
+
+        // Add event listener for search bar input
+        searchBar.addEventListener('input', filterEntrepreneurs);
+    </script>
+</body>
+</html>
